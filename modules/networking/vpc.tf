@@ -12,7 +12,7 @@ module "vpc" {
   
   # subnets
   private_subnets = var.private_subnets
-  # intra_subnets   = var.intra_subnets
+  intra_subnets   = var.intra_subnets
   public_subnets  = var.public_subnets
 
   enable_vpn_gateway = true

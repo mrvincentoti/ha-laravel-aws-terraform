@@ -32,7 +32,6 @@ variable "public_subnets" {
     ]
     description = "Public subnets CIDR (one per az), where the load balancer will be deployed"
 }
-/*
 variable "intra_subnets" {
     type        = list(string)
     default     = [
@@ -40,4 +39,4 @@ variable "intra_subnets" {
         "192.168.5.0/24"
     ]
     description = "Intra subnets CIDR (one per az), where the databases will be deployed"
-}*/
+}
