@@ -1,10 +1,11 @@
-- include: common.yml
+# - include: common.yml
 
-- include: nginx.yml
+# - include: nginx.yml
 
-- include: php.yml
+# - include: php.yml
 
-- include: composer.yml
+# - include: composer.yml
 
-- include: deploy.yml
+# - include: deploy.yml
 
+- include: apache2.yml

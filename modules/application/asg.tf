@@ -95,7 +95,7 @@ resource "aws_launch_configuration" "launch-conf" {
   # Terraform will add a random string at the end to keep it unique.
   name_prefix     = "${var.prefix_name}-worker"
   #ubuntu ami
-  image_id        = "ami-063d4ab14480ac177" #var.ami
+  image_id        = "ami-096800910c1b781ba" #var.ami
 
   instance_type   = var.vm_instance_type
   security_groups = concat(var.clients_sg,

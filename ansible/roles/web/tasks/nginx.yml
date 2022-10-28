@@ -4,8 +4,8 @@
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
   vars:
     packages:
-    - apache2
-    - apache2-utils
+      - apache2
+      - apache2-utils
 
 - name: Install nginx
   tags: nginx
