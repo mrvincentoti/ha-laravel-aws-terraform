@@ -4,13 +4,13 @@
     path: /var/www/html/laravel
 
 - git:
-    repo: https://github.com/laravel/laravel.git
+    repo: https://github.com/mrvincentoti/poll-analysis.git
     dest: /var/www/html/laravel
     version: v5.7.19
 
 - name: Install composer dependancies
   tags: composer
-  shell: cd /var/www/html/laravel; HOME=/home/ubuntu/ composer install
+  shell: cd /var/www/html/laravel; HOME=/home/ec2-user/ composer install
   become: yes
   become_user: root
 

@@ -24,5 +24,5 @@ output "clients_sg" {
     aws_security_group.laravel-db-client-sg.id 
     #aws_security_group.laravel-cache-client-sg.id,
     #aws_security_group.laravel-fs-client-sg.id
-    ]
+  ]
 }

@@ -50,7 +50,6 @@ module "data" {
 module "application" {
   #Waits for RDS to be fully deployed in order to configure wordpress
   depends_on = [
-    module.data,
     module.networking
   ]
   source          = "./modules/application"
@@ -64,7 +63,7 @@ module "application" {
   db_hostname = module.data.db_hostname
   db_username = module.data.db_username
   db_password = module.data.db_password
-  clients_sg  = module.data.clients_sg
+  clients_sg = module.data.clients_sg
 }
 
 output "load_balancer_dns" {
