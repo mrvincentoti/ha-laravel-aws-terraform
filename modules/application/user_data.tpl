@@ -1,9 +1,10 @@
 #!/bin/bash
 
-sudo yum update -y
-sudo amazon-linux-extras install epel -y
-sudo yum install ansible -y
-sudo yum install git -y
+sudo apt update -y
+
+sudo apt-get install -y software-properties-common
+sudo apt-add-repository --yes --update ppa:ansible/ansible
+sudo apt-get install -y ansible git
 
 
 git clone https://github.com/mrvincentoti/ha-laravel-aws-terraform.git /home/ec2-user/laravel
