@@ -16,7 +16,7 @@
   command: php /tmp/composer-setup.php --install-dir=/usr/bin --filename=composer
   when: composer_binary.stat.exists == false
   environment:
-    HOME: /home/ec2-user/
+    HOME: /home/ubuntu/
 
 - name: Update to latest composer version
   tags: composer
