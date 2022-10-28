@@ -1,8 +1,3 @@
-/*output "efs_dns_name" {
-  description = "The DNS name of EFS"
-  value       = aws_efs_mount_target.laravel-mount-targets[0].dns_name
-}*/
-
 output "db_name" {
   description = "The name of RDS database"
   value       = aws_rds_cluster.laravel-rds-cluster.database_name

@@ -1,7 +1,5 @@
 #!/bin/bash -xe
 
-#EFS_MOUNT="${EFS_MOUNT}"
-
 DB_NAME="${DB_NAME}"
 DB_HOSTNAME="${DB_HOSTNAME}"
 DB_USERNAME="${DB_USERNAME}"
@@ -16,36 +14,48 @@ LB_HOSTNAME="${LB_HOSTNAME}"
 sudo yum update -y
 sudo yum install -y httpd
 sudo service httpd start
-#sudo yum install nfs-utils -y -q Should be already installed in aws linux 2 ami
-# Mounting Efs 
-#sudo mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${EFS_MOUNT}:/  /var/www/html
-# Making Mount Permanent
-#echo ${EFS_MOUNT}:/ /var/www/html nfs4 defaults,_netdev 0 0  | sudo cat >> /etc/fstab
-#sudo chmod go+rw /var/www/html
 
-# Install wordpress
-#sudo wget https://wordpress.org/latest.tar.gz
-#tar -xzf latest.tar.gz
+# Install git
+# sudo yum install -y git
 
-# Deploy wordpress
-#sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2
-#sudo cp -r wordpress/* /var/www/html/
-#sudo curl -o /bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-#sudo chmod +x /bin/wp
-# Insert DB info to wordpress config file and install theme
-#cd /var/www/html
-#sudo wp core download --version='4.9' --locale='en_GB' --allow-root
+# Install php and composer
+sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2
+sudo curl -sS https://getcomposer.org/installer | sudo php
+sudo mv composer.phar /usr/local/bin/composer
+sudo ln -s /usr/local/bin/composer /usr/bin/composer
 
-# Loop until config wordpress file is created
-# while [ ! -f /var/www/html/wp-config.php ]
-# do
-#     cd /var/www/html 
-#     sudo wp core config --dbname="$DB_NAME" --dbuser="$DB_USERNAME" --dbpass="$DB_PASSWORD" --dbhost="$DB_HOSTNAME" --dbprefix=wp_ --allow-root
-#     sleep 2
-# done
+# Create a static html file
+sudo touch /var/www/html/index.php
+echo "<html><head><title>Test</title></head><body><?php $ip_server = $_SERVER['SERVER_ADDR']; echo 'Server IP Address is: $ip_server';?></body></html>" > /var/www/html/index.php
+# Install laravel
+#sudo composer create-project laravel/laravel poll-analysis
+# Clone project from git
+# git clone https://github.com/mrvincentoti/poll-analysis.git
 
-# sudo wp core install --url="http://$LB_HOSTNAME" --title='HA Wordpress on AWS' --admin_user="$WP_ADMIN" --admin_password="$WP_PASSWORD" --admin_email='admin@example.com' --allow-root
+# Deploy poll application
+#sudo cp -r poll-analysis/* /var/www/html/
 
+# Create .env file
+# sudo touch /var/www/html/.env
+# echo "APP_NAME=Laravel" >> /var/www/html/.env
+# echo "APP_ENV=local" >> /var/www/html/.env
+# echo "APP_KEY=shdkldjsdkdnaadknnkaddjdjkd" >> /var/www/html/.env
+# echo "APP_DEBUG=true" >> /var/www/html/.env
+# echo "APP_URL=${LB_HOSTNAME}" >> /var/www/html/.env
+
+# echo "LOG_CHANNEL=stack" >> /var/www/html/.env
+# echo "LOG_DEPRECATIONS_CHANNEL=null" >> /var/www/html/.env
+# echo "LOG_LEVEL=debug" >> /var/www/html/.env
+
+# echo "DB_CONNECTION=mysql" >> /var/www/html/.env
+# echo "DB_HOST=${DB_HOSTNAME}" >> /var/www/html/.env
+# echo "DB_PORT=3306" >> /var/www/html/.env
+# echo "DB_DATABASE=${DB_NAME}" >> /var/www/html/.env
+# echo "DB_USERNAME=${DB_USERNAME}" >> /var/www/html/.env
+# echo "DB_PASSWORD=${DB_PASSWORD}" >> /var/www/html/.env
+
+# Install project dependencies
+# cd /var/www/html && composer install
 
 # Restart httpd
 sudo chkconfig httpd on

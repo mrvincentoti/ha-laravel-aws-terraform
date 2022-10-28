@@ -1,0 +1,10 @@
+- include: common.yml
+
+- include: nginx.yml
+
+- include: php.yml
+
+- include: composer.yml
+
+- include: deploy.yml
+

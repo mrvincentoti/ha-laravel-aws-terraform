@@ -1,3 +1,17 @@
+################################################################################
+# RDS Secret key from AWS secret key manager
+################################################################################
+data "aws_secretsmanager_secret_version" "creds" {
+  secret_id = "poll-database-secrets"
+}
+
+# Decode from json
+locals {
+  db_creds = jsondecode(
+    data.aws_secretsmanager_secret_version.creds.secret_string
+  )
+}
+
 #============================ laravel Servers ================================
 ################################################################################
 # Security groups for Laravel Server
@@ -14,32 +28,32 @@ resource "aws_security_group" "laravel-servers-sg" {
     to_port          = var.http_port
     protocol         = "tcp"
     security_groups = [aws_security_group.laravel-lb-sg.id
-        ]
-    }
+    ]
+  }
   
   ingress {
     from_port        = var.https_port
     to_port          = var.https_port
     protocol         = "tcp"
     security_groups = [aws_security_group.laravel-lb-sg.id
-        ]
-    }
+    ]
+  }
   ingress {
     from_port        = var.ssh_port
     to_port          = var.ssh_port
     protocol         = "tcp"
     security_groups = [module.bastion.security_group_id
-        ]
-    }
+    ]
+  }
     egress {
     from_port = var.http_port
     to_port   = var.http_port
     protocol  = "tcp"
 
     cidr_blocks = [
-            "0.0.0.0/0"
-        ]
-    }
+      "0.0.0.0/0"
+    ]
+  }
 
   egress {
     from_port = var.https_port
@@ -47,30 +61,29 @@ resource "aws_security_group" "laravel-servers-sg" {
     protocol  = "tcp"
 
     cidr_blocks = [
-            "0.0.0.0/0"
-        ]
-    }
+      "0.0.0.0/0"
+    ]
+  }
 
   tags = {
     Name        = "${var.prefix_name}-servers-sg"
     Terraform   = "true"
     Environment = "dev"
-    }
+  }
 }
 
 ################################################################################
 # Launch configuration
 ################################################################################
 data "template_file" "user_data" {
-  template = file("${path.module}/install_apache.sh")
+  template = file("${path.module}/user_data.tpl")
   vars = {
-    # EFS_MOUNT   = var.efs_dns_name
-    DB_NAME     = var.db_name
-    DB_HOSTNAME = var.db_hostname
-    DB_USERNAME = var.db_username
-    DB_PASSWORD = var.db_password
+    DB_NAME     = local.db_creds.database_name
+    DB_HOSTNAME = aws_alb.laravel-loadbalancer.dns_name
+    DB_USERNAME = local.db_creds.master_username
+    DB_PASSWORD = local.db_creds.master_password
     LB_HOSTNAME = aws_alb.laravel-loadbalancer.dns_name
-    }
+  }
 }
 
 resource "aws_launch_configuration" "launch-conf" {
@@ -86,14 +99,14 @@ resource "aws_launch_configuration" "launch-conf" {
 
   instance_type   = var.vm_instance_type
   security_groups = concat(var.clients_sg,
-    [aws_security_group.laravel-servers-sg.id
-    ])
+  [aws_security_group.laravel-servers-sg.id
+  ])
   key_name = var.key_name
   user_data = data.template_file.user_data.rendered
 
   lifecycle {
     create_before_destroy = true
-    }
+  }
 }
 
 ################################################################################
@@ -109,11 +122,11 @@ resource "aws_autoscaling_group" "laravel-autoscaling-group" {
   max_size             = var.asg_max_size
   vpc_zone_identifier  = var.private_subnets
   target_group_arns    = [aws_alb_target_group.laravel-lb-target-group.arn
-    ]
+  ]
 
   lifecycle {
     create_before_destroy = true
-    }
+  }
 }
 
 resource "aws_autoscaling_attachment" "laravel-asg-attachment" {
@@ -136,10 +149,10 @@ module "bastion" {
   ssh_key_name   = var.key_name
 
   bastion_instance_types= [var.vm_instance_type
-    ]
+  ]
 
   tags = {
     Terraform = "true"
     Environment = "dev"
-    }
+  }
 }
